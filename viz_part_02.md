@@ -77,9 +77,41 @@ weather_df %>%
     y = "Maximum Daily Temp (C)",
     title = "Scatterplot of daily temp extremes",
     caption = "Data come from the rnoaa package"
+  ) +
+  scale_x_continuous(
+    breaks = c(-10, 0, 15),
+    labels = c("-10C", "0", "15")
   )
 ```
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](viz_part_02_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+# scale_y_continuous(
+#    trans = "sqrt" #square root of the y axis
+#  )
+```
+
+Make a new version – color changed
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    x = "Minimum Daily Temp (C)",
+    y = "Maximum Daily Temp (C)",
+    title = "Scatterplot of daily temp extremes",
+    caption = "Data come from the rnoaa package"
+  ) +
+  scale_color_hue(
+    name = "Location",
+    h = c(100, 300)
+    )
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_part_02_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
