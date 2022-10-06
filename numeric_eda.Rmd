@@ -36,7 +36,114 @@ weather_df =
   select(name, id, everything())
 ```
 
-```{r}
 
+## `group_by()`
+
+```{r}
+weather_df %>% 
+  group_by(name)
+
+weather_df %>% 
+  group_by(month)
+
+weather_df %>% 
+  group_by(name, month)
+```
+
+
+## `summarise()`
+
+let's group and then summarize!
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  summarise(
+    n_obs = n()
+  )
+
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(
+    n_obs = n()
+  )
+```
+
+can we count in other ways?
+
+```{r}
+weather_df %>% 
+  count(name, month)
+```
+
+don't use `table()` (baseR's built-in function)
+
+the output is not a dataframe!
+
+```{r, eval = FALSE}
+weather_df %>% 
+  pull(month) %>% 
+  table()
+```
+
+you can have multiple summaries
+
+```{r}
+weather_df %>% 
+  group_by(month) %>% 
+  summarise(
+    n_obs = n(),
+    n_dist = n_distinct()
+  )
+
+weather_df %>% 
+  group_by(month) %>% 
+  summarise(
+    n_obs = n(),
+    n_dist = n_distinct(month)
+  )
+
+weather_df %>% 
+  group_by(month) %>% 
+  summarise(
+    n_obs = n(),
+    n_dist = n_distinct(date)
+  )
+```
+
+
+## a brief aside on 2x2 tables
+
+```{r}
+weather_df %>% 
+  mutate(
+    cold = case_when(
+      tmax <  5 ~ "cold",
+      tmax >= 5 ~ "not_cold",
+      TRUE      ~ "" # what will happen by default
+  )) %>% 
+  filter(name != "Waikiki_HA") %>% 
+  group_by(name, cold) %>% 
+  summarize(
+    n_obs = n()
+  ) %>% 
+  pivot_wider( # turn into a 2x2 table by `pivot_wider()`
+    names_from = "cold",
+    values_from = "n_obs"
+  )
+```
+
+other ways to make a 2x2 table by a `janitor()` package, quicker than `pivot_wider()`
+
+```{r}
+weather_df %>% 
+  mutate(
+    cold = case_when(
+      tmax <  5 ~ "cold",
+      tmax >= 5 ~ "not_cold",
+      TRUE      ~ ""
+  )) %>% 
+  filter(name != "Waikiki_HA") %>% 
+  janitor::tabyl(name, cold)
 ```
 
